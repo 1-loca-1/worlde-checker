@@ -89,6 +89,43 @@ async def submit(interaction: discord.Interaction, word: str):
         ephemeral=True
     )
 
+async def reset_roles_daily():
+    await client.wait_until_ready()
+
+    guild = client.get_guild(GUILD_ID)
+    role = guild.get_role(ROLE_ID)
+
+    while True:
+        now = datetime.now(ZoneInfo("Europe/London"))
+
+        # calculate next midnight
+        next_midnight = datetime.combine(
+            now.date(),
+            time(0, 0),
+            tzinfo=ZoneInfo("Europe/London")
+        )
+
+        if now >= next_midnight:
+            next_midnight = datetime.combine(
+                now.date().replace(day=now.day + 1),
+                time(0, 0),
+                tzinfo=ZoneInfo("Europe/London")
+            )
+
+        sleep_seconds = (next_midnight - now).total_seconds()
+
+        await asyncio.sleep(sleep_seconds)
+
+        # 🔥 RESET ROLE
+        for member in guild.members:
+            if role in member.roles:
+                try:
+                    await member.remove_roles(role)
+                except:
+                    pass
+
+        print("Daily reset complete")
+
 
 # -------------------------
 # SYNC COMMANDS

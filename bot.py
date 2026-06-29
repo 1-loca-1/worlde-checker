@@ -27,18 +27,11 @@ TODAY_WORD = None
 # -------------------------
 @tree.command(
     name="setword",
-    description="Set today's Wordle word (admin only)",
+    description="Set today's Wordle word",
     guild=discord.Object(id=GUILD_ID)
 )
 @app_commands.describe(word="The word for today")
 async def setword(interaction: discord.Interaction, word: str):
-
-    # simple permission check
-    if not interaction.user.guild_permissions.administrator:
-        return await interaction.response.send_message(
-            "❌ You need admin permissions to use this.",
-            ephemeral=True
-        )
 
     global TODAY_WORD
     TODAY_WORD = word.lower()
@@ -47,7 +40,6 @@ async def setword(interaction: discord.Interaction, word: str):
         f"✅ Today's word has been set to: **{TODAY_WORD}**",
         ephemeral=True
     )
-
 
 # -------------------------
 # USER: submit answer
